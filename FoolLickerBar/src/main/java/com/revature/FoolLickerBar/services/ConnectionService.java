@@ -1,6 +1,7 @@
 package com.revature.FoolLickerBar.services;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Properties;
@@ -15,11 +16,13 @@ private Connection connection;
 			Properties p = new Properties();
 			p.load(fis);
 			
-			connection = DriverManager.getConnection(p.getProperty("jdbc:postgresql://ruby.db.elephantsql.com:5432/wrdfegjq"), 
-					p.getProperty("wrdfegjq"), p.getProperty("nWnAGBnhrbJDKE4XVaOWbYW_qHbTPD3l"));
-			//input your shit here
-		} catch (Exception e) {
+			connection = DriverManager.getConnection(p.getProperty("hostname"), 
+					p.getProperty("username"), p.getProperty("password"));
+			//input your shit in a connection.prop file
+		} catch(SQLException e) {
 			System.out.println("Exception: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

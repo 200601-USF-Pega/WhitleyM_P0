@@ -1,19 +1,32 @@
 package com.revature.FoolLickerBar.services;
 import java.util.Scanner;
 
+//import com.revature.FoolLickerBar.dao.IGuestRepo;
+import com.revature.FoolLickerBar.models.Account;
+
 public class AccountService {
-	public boolean createNewAccount(){
+	
+ConnectionService connectionService;
+ValidationService inputValidation = new ValidationService();
+//IGuestRepo repo;
+
+//public AccountService(IGuestRepo repo) {
+	//this.repo = repo;
+//}
+	
+	public AccountService(ConnectionService connectionService) {
+		this.connectionService = connectionService;
+	}
+	
+	public Account createNewAccount(Account account){
+		return account;
+	
+
+	
+			
 		
-		Scanner scan = new Scanner(System.in);
-		
-		System.out.println("Hello friend. This is probably the most work you've had to do to pay somebody else money! Hahaha! Anyways...");
-		System.out.println("");
-		
-		System.out.print("Create username: ");
-		String username = scan.next();
 		
 		
-		
-		return true;
+	
 	}
 }
