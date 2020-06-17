@@ -49,7 +49,7 @@ public class BartenderService {
 				}
 			connectionService.finalize();
 			
-			System.out.println("\nWould you like to check on the guests?\n [1] Yes\n [2] No\n");
+			System.out.println("\nWould you like to see what Guest is at the bar?\n [1] Yes\n [2] No\n");
 			String incomeCheck = scan.next();
 			int option = 0;
 			try {
@@ -76,12 +76,11 @@ public class BartenderService {
 			Statement st= null;
 			try {
 				PreparedStatement getStock = connectionService.getConnection().prepareStatement(
-							"SELECT * FROM guest_info;");
+							"SELECT guestname FROM guest_info;");
 					ResultSet itemsRS = getStock.executeQuery();
 					ResultSetMetaData rsmd = itemsRS.getMetaData();
 					int columnsNumber = rsmd.getColumnCount();
-					System.out.println(String.format("|%-20s|%-20s|%-20s", "Username", 
-							"Tab Cost", "Favorite Drink\n"));
+					System.out.println(String.format("|%-20s", "Username"));
 					while (itemsRS.next()) {
 					    for(int i = 1; i <= columnsNumber; i++)
 					    System.out.print(String.format("|%-20s",itemsRS.getString(i) + "   "));

@@ -56,7 +56,7 @@ public class AdminService {
 			}	
 			switch(option) {
 			case 1:
-				getBarIncome();
+				getBartenderIncome();
 				break;
 			case 2: 
 				System.out.println("Goodbye!");
@@ -67,7 +67,52 @@ public class AdminService {
 }
 		
 		
-		public int getBarIncome() {
+		public int getBartenderIncome() {
+			ConnectionService connectionService = new ConnectionService();
+			Scanner scan = new Scanner(System.in);
+			
+			try {
+				PreparedStatement addTip = connectionService.getConnection().prepareStatement(
+						"SELECT * FROM tips");
+						addTip.executeQuery();
+						ResultSet itemsRS = addTip.executeQuery();
+						//	ResultSet rs = st.executeQuery("SELECT * from contacts");
+							ResultSetMetaData rsmd = itemsRS.getMetaData();
+							int columnsNumber = rsmd.getColumnCount();
+							System.out.println(String.format("|%-20s|%-20s", "Bartender Name", 
+									"Tips ($)"));
+							while (itemsRS.next()) {
+							    for(int i = 1; i <= columnsNumber; i++)
+							    System.out.print(String.format("|%-20s",itemsRS.getString(i) + "   "));
+							        		
+							    System.out.println();
+							}
+				}catch (SQLException e) {
+					System.out.println("Exception: " + e.getMessage());
+					e.printStackTrace();
+				}
+			
+			connectionService.finalize();
+			
+			System.out.println("\nWould you like to check the bar's stock?\n [1] Yes\n [2] No\n");
+			String incomeCheck = scan.next();
+			int option = 0;
+			try {
+				option= Integer.parseInt(incomeCheck);
+			}
+			catch(NumberFormatException optionExp){
+				option=1;
+				System.out.println("Hey, don't get fancy. No decimals or funny business now");
+			}	
+			switch(option) {
+			case 1:
+				getTotalStock();
+				break;
+			case 2: 
+				System.out.println("Goodbye!");
+				break;
+			}
+			
 			return 0;
 		}
 		
@@ -122,11 +167,11 @@ public class AdminService {
 						getTotalStock();
 						break;
 					case 2:
-						getBarIncome();
+						getBartenderIncome();
 						break;
 					case 3:
 						System.out.println("HA! You are TOO funny! Anyways, back to work. Let's go ahead and check our money, shall we? ");
-						getBarIncome();
+						getBartenderIncome();
 						break;
 					}
 				break;

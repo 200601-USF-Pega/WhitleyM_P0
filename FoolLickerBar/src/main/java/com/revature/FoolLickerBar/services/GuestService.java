@@ -52,7 +52,7 @@ public class GuestService {
 				switch(option) {
 				
 				case 1:
-					System.out.println("Glad to see a newcomer! What's your name? ");
+					System.out.println("Glad to see a newcomer! What's your first name?");
 					//name = scan.next();
 					String nameValid = scan.next();//validationService.getValidString(); //takes in name
 					System.out.print("Create a username! 5-15 characters ");
@@ -100,7 +100,7 @@ public class GuestService {
 								//	"INSERT INTO guest_info VALUES (?)");
 							//playerInsert.setString(1, player.getPlayerID());
 						}
-					
+					break;
 					//repo.getAllItems();
 					//System.out.println("Hey, don't get fancy. No decimals or funny business now");
 				case 2:
@@ -227,10 +227,104 @@ public class GuestService {
 				}
 			//connectionService.finalize();
 			
-			System.out.println("\nWhat can I get you? Please tell me the name of the drink you would like");
+			System.out.println("\nWhat can I get you? Please tell me the name of the drink you would like.");
 			String drinkName = scan.next();
-			System.out.println("Coming right up!");
+			//drinkName = drinkName.replaceAll("\\s","");
 			
+
+			System.out.println("Coming right up!");
+
+			System.out.println("Alright! Here is the "+drinkName+" you asked for :)");
+			
+			
+			
+			try {
+				PreparedStatement subtractStock = connectionService.getConnection().prepareStatement(
+						"UPDATE stock SET stockadmin = stockadmin - 5 WHERE alcohol_name = ?");
+						subtractStock.setString(1, drinkName);
+						subtractStock.execute();
+				}catch (SQLException e) {
+					System.out.println("Exception: " + e.getMessage());
+					e.printStackTrace();
+				}
+			
+			try {
+				PreparedStatement addMoney = connectionService.getConnection().prepareStatement(
+						"SELECT SUM(alcohol_price)\r\n" + 
+						"FROM stock\r\n" + 
+						"WHERE alcohol_name = ?");
+						addMoney.setString(1, drinkName);
+							//addMoney.setString(1,  drinkName);
+						addMoney.executeQuery();
+				}catch (SQLException e) {
+					System.out.println("Exception: " + e.getMessage());
+					e.printStackTrace();
+				}
+			
+			connectionService.finalize();
+			
+			System.out.println("\nCan I do anything else for you?\n[1] Order another drink\n[2] Close tab\n[3] Leave a tip");
+			String input = scan.next();
+			int option = 0;
+			try {
+				option = Integer.parseInt(input);
+			}
+			catch(NumberFormatException optionExp){
+				option=1;
+				System.out.println("Hey, don't get fancy. No decimals or funny business now");
+			}	
+			switch(option) {
+			case 1:
+				getDrinkMenu();
+				break;
+			case 2: 
+				System.out.println("Alright, you're all clear! Have a great one");
+				connectionService.finalize();
+				break;
+			case 3:
+				System.out.println("Oh! How nice. How much would you like to tip?");
+				String tipString = scan.next();
+				int tipInt = 0;
+				
+				try {
+					tipInt = Integer.parseInt(tipString);
+				}
+				catch(NumberFormatException optionExp){
+					option=1;
+					System.out.println("Hey, don't get fancy. No decimals or funny business now");
+				}	
+				try {
+					PreparedStatement addTip = connectionService.getConnection().prepareStatement(
+							"UPDATE tips SET tip_amount = tip_amount + ? WHERE bartender = ?");
+							addTip.setInt(1, tipInt);
+							addTip.setString(2, "Jacob");
+							addTip.execute();
+					}catch (SQLException e) {
+						System.out.println("Exception: " + e.getMessage());
+						e.printStackTrace();
+					}
+				System.out.println("Thank you very much! Anything else I can do for you?");
+				System.out.println("\nCan I do anything else for you?\n[1] Order another drink\n[2] Close tab\n");
+				String input2 = scan.next();
+				int option2 = 0;
+				try {
+					option2 = Integer.parseInt(input2);
+				}
+				catch(NumberFormatException optionExp){
+					option2=1;
+					System.out.println("Hey, don't get fancy. No decimals or funny business now");
+				}	
+				switch(option2) {
+				case 1:
+					getDrinkMenu();
+					break;
+				case 2: 
+					System.out.println("Alright, you're all clear! Have a great one");
+					connectionService.finalize();
+					break;
+			}
+			break;
+			}
 			return 0;
 			
 }
