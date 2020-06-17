@@ -8,9 +8,13 @@ import java.util.Properties;
 import java.sql.SQLException;
 
 public class ConnectionService {
-private Connection connection;
+private static Connection connection;
 	
 	public ConnectionService() {
+		
+	}
+	
+	public static Connection getConnection() {
 		try  {
 			FileInputStream fis = new FileInputStream("connection.prop");
 			Properties p = new Properties();
@@ -25,9 +29,7 @@ private Connection connection;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public Connection getConnection() {
+		//return connection;
 		return connection;
 	}
 	

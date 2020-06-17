@@ -4,9 +4,11 @@ import java.util.Scanner;
 import com.revature.FoolLickerBar.dao.IAlcoholStockDB;
 import com.revature.FoolLickerBar.services.AdminService;
 import com.revature.FoolLickerBar.services.BartenderService;
+import com.revature.FoolLickerBar.services.ConnectionService;
 import com.revature.FoolLickerBar.services.GuestService;
 import com.revature.FoolLickerBar.services.ValidationService;
 import com.revature.FoolLickerBar.*;
+import java.sql.*;
 
 public class Menu {
 		IAlcoholStockDB repo;
@@ -22,6 +24,7 @@ public class Menu {
 			boolean caseZeroLoop=true;
 			Scanner scan = new Scanner(System.in);
 			ValidationService validationService = new ValidationService();
+		
 			
 			do {
 			String input = scan.next();
@@ -55,13 +58,13 @@ public class Menu {
 				case 1:
 					//System.out.println("Exiting...");
 					BartenderService caseOne = new BartenderService(repo);
-					caseOne.getTotalStock();
+					caseOne.checkIfBartender();
 					startLoop=false;
 					break;		
 				case 2:
 					
-					//AdminService caseTwo = new AdminService(repo);
-					//caseTwo.getTotalStock();
+					AdminService caseTwo = new AdminService(repo);
+					caseTwo.checkIfAdmin();
 					startLoop=false;
 					break;
 				case 3:

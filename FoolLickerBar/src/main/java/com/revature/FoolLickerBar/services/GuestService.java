@@ -29,6 +29,7 @@ public class GuestService {
 			String password;
 			//Account account = new Account(name, username, password);
 			boolean caseZeroLoop = true;
+			boolean loop = true;
 			//try {
 			
 				System.out.println("Glad to see you came in today. Before we start with the fun stuff, I need you to log in to your guest account here at Fool Licker bar.");
@@ -49,94 +50,191 @@ public class GuestService {
 				}	
 				
 				switch(option) {
+				
 				case 1:
-					Statement st = null;
+					System.out.println("Glad to see a newcomer! What's your name? ");
+					//name = scan.next();
+					String nameValid = scan.next();//validationService.getValidString(); //takes in name
+					System.out.print("Create a username! 5-15 characters ");
+					//String userNameValid = validationService.getValidString(); //takes in username
+					String userNameValid = scan.next();
+					
+					//while (caseZeroLoop) {
+						if (userNameValid.length() > 15 || userNameValid.length() < 5) {
+							System.out.println("Innapropriate username length!");
+							createNewTab();
+							connectionService.finalize();
+						} else if(checkGuestExists(userNameValid)) {
+							userNameValid = validationService.getValidString();
+							//System.out.println("ID already taken...try again");
+						} else {
+							System.out.print("Create a password! 5-20 characters ");
+							String passwordValid = scan.next();//validationService.getValidString(); //takes in password
+							if (passwordValid.length() > 20 || passwordValid.length() < 5) {
+								System.out.println("Innapropriate password length!");
+								connectionService.finalize();
+								createNewTab();
+							} //else if(checkGuestExists(userNameValid)) {
+								//userNameValid = validationService.getValidString();
+							else {
+								try {
+									PreparedStatement addGuest = connectionService.getConnection().prepareStatement(
+											"INSERT INTO guests (guestusername, guestpassword, guestname) VALUES (?, ?, ?);");
+									addGuest.setString(1, userNameValid);
+									addGuest.setString(2, passwordValid);
+									addGuest.setString(3, nameValid);
+									addGuest.execute();
+									System.out.println("Account created and tab opened!");
+									connectionService.finalize();
+									//userVerification.executeQuery();
+						
+									
+								}catch (SQLException e) {
+									System.out.println("Exception: " + e.getMessage());
+									e.printStackTrace();
+								}
+							}
+							
+							
+							//PreparedStatement usernameInsert = connectionService.getConnection().prepareStatement(
+								//	"INSERT INTO guest_info VALUES (?)");
+							//playerInsert.setString(1, player.getPlayerID());
+						}
+					
+					//repo.getAllItems();
+					//System.out.println("Hey, don't get fancy. No decimals or funny business now");
+				case 2:
+					while(loop=true) {
+					System.out.print("Glad to see a regular! Enter your username: ");
+					//String userNameValid = validationService.getValidString(); //takes in username
+					String regularUserName = scan.next();	
+					System.out.print("Please enter password: ");
+					String regularPassword = scan.next();
+					Statement st;
 					try {
-					PreparedStatement getStock = connectionService.getConnection().prepareStatement(
-								"SELECT * FROM stock;");
-						ResultSet itemsRS = getStock.executeQuery();
-				//	ResultSet rs = st.executeQuery("SELECT * from contacts");
-					ResultSetMetaData rsmd = itemsRS.getMetaData();
-					int columnsNumber = rsmd.getColumnCount();
-
-					while (itemsRS.next()) {
-					    for(int i = 1; i < columnsNumber; i++)
-					        System.out.print(itemsRS.getString(i) + "    ");
-					    System.out.println();
-					}
+						PreparedStatement userVerification = connectionService.getConnection().prepareStatement(
+							"SELECT guestusername, guestpassword, guestname FROM guests WHERE guestusername = ? AND guestpassword = ?");
+						userVerification.setString(1, regularUserName);
+						userVerification.setString(2, regularPassword);
+						userVerification.executeQuery();
+						ResultSet rs = userVerification.executeQuery();
+					
+						if(rs.next()) {
+							System.out.println("\nLogin successful! How can I help you? \n");
+							
+							
+						//THIS NEXT PART OF CODE IS SO UGLY I AM SORRY
+							
+							connectionService.finalize();
+							//loop=false; <-- for some reason this does nothing to stop the while loop, so i broke out of it manually
+							//connectionService.close();
+							System.out.println("What all would you like to do?\n[1] Buy a drink! \n[2] I'm done for the day");
+							String barInput = scan.next();
+							int option2 = 0;
+							try {
+								option2= Integer.parseInt(barInput);
+							}
+							catch(NumberFormatException optionExp){
+								option2=1;
+								System.out.println("Hey, don't get fancy. No decimals or funny business now");
+							}	
+							switch(option2) {
+							case 1:
+								getDrinkMenu();
+								break;
+							case 2:
+								//getGuests();
+								break;
+							}
+						break;
+						}else {
+							System.out.println("\nLogin not successful. Try again \n");
+						}
+			
+					
 					}catch (SQLException e) {
 						System.out.println("Exception: " + e.getMessage());
 						e.printStackTrace();
 					}
-					//repo.getAllItems();
-					//System.out.println("Hey, don't get fancy. No decimals or funny business now");
-				}
-				/*
-				switch(option) {
-				case 1: 
-					System.out.println("Hello friend. This is probably the most work you've had to do to pay somebody else money! Hahaha! Anyways...");
-					System.out.println("");
-					
-					System.out.print("Tell us your name:  ");
-					String nameValid = validationService.getValidString();
-					
-					System.out.print("Create a username! 5-20 characters ");
-					String userNameValid = validationService.getValidString();
-					while (caseZeroLoop) {
-						if (userNameValid.length() > 20 || userNameValid.length() < 5) {
-							System.out.println("Learn to count, try again later...");	
-																		
-						} else if(playerService.checkPlayerExists(inputtedID)) {
-							inputtedID = validationService.getValidString();
-							System.out.println("ID already taken...try again");
-						} else {
-							String inputtedPassword = "";
-							do {
-								System.out.println("Enter a password (4-24 characters):");
-								inputtedPassword = validationService.getValidString();
-							} while(inputtedPassword.length() < 4 || inputtedPassword.length() > 24); 					
-							currPlayerID = playerService.createNewPlayer(inputtedID, inputtedPassword);
-							loggedIn = true;
-							break;
-						}
 					}
-				/*	name = scan.next();
-					System.out.print("Create username: ");
-					username = scan.next();
-					System.out.print("Create password: ");
-					password = scan.next();
-					
-					Account caseOne = new Account(name, username, password);
-					//caseOne.createNewAccount(caseOne);
-					//call create account method
-					break;
-				case 2:
-					//AccountService caseTwo = new AccountService();
-					//call log in to account method
-					break;
+				break;
+						
 				case 3:
-					System.out.println("Hey man, it's 2020. DIGITAL REVOLUTION!");
+					System.out.println("Hey man, it's 2020. DIGITAL REVOLUTION!\n\nNice try...");
+					createNewTab();
 					break;
 				default: 
 					System.out.println("Sorry pal. You have to choose from one of the options listed above");
+				
 				}
-				
-				System.out.println("[1] Feeling fancy...do y'all have wine?");
-				System.out.println("[2] Gimmie a beer for the game");
-				System.out.println("[3] Give me your strongest stuff");
-				System.out.println("[4] Sorry, man. Not feeling it after all");
-				
-
-				String typeOfAlcohol = scan.nextLine();
-				
-				//scan.nextLine();
-				//^^scanners can be buggy so you use this to make it work
-			//}
-			//finally {
-			//	System.out.print("smd");
-		//	}
-		*/
 				
 			return true;
 }
+		
+		public boolean checkGuestExists(String valid){
+			//List<Guest> guestsThatExist = repo.getAllPlayers();
+			ConnectionService connectionService = new ConnectionService();
+			try {
+				PreparedStatement userVerification = connectionService.getConnection().prepareStatement(
+						"SELECT guestusername FROM guests WHERE guestusername = ?");
+				userVerification.setString(1, valid);
+
+				//userVerification.executeQuery();
+				ResultSet rs = userVerification.executeQuery();
+			
+				if(!rs.next()) { //if username is NOT already taken...
+					System.out.println("Accepted! \n");
+					connectionService.finalize();
+				}else {
+					System.out.println("\nUsername already taken. Try again \n");
+					connectionService.finalize();
+					createNewTab();
+				}
+	
+				
+			}catch (SQLException e) {
+				System.out.println("Exception: " + e.getMessage());
+				e.printStackTrace();
+			}
+			return false;
+			}
+		
+		public int getDrinkMenu(){
+			ConnectionService connectionService = new ConnectionService();
+			Statement st= null;
+			Scanner scan = new Scanner(System.in);
+			
+			System.out.println("Of course! Here is today's drink menu:\n");
+			
+			try {
+				PreparedStatement getStock = connectionService.getConnection().prepareStatement(
+							"SELECT * FROM stock;");
+					ResultSet itemsRS = getStock.executeQuery();
+			//	ResultSet rs = st.executeQuery("SELECT * from contacts");
+				ResultSetMetaData rsmd = itemsRS.getMetaData();
+				int columnsNumber = rsmd.getColumnCount();
+				System.out.println(String.format("|%-20s|%-20s|%-20s|%-20s", "Alcohol Type", 
+						"Alcohol Name", "Alcohol Content (%)", "Price\n"));
+				while (itemsRS.next()) {
+				    for(int i = 1; i < columnsNumber; i++)
+				    System.out.print(String.format("|%-20s",itemsRS.getString(i) + "   "));
+				        		
+				    System.out.println();
+				}
+				}catch (SQLException e) {
+					System.out.println("Exception: " + e.getMessage());
+					e.printStackTrace();
+				}
+			//connectionService.finalize();
+			
+			System.out.println("\nWhat can I get you? Please tell me the name of the drink you would like");
+			String drinkName = scan.next();
+			System.out.println("Coming right up!");
+			
+			return 0;
+			
 }
+		
+}
+
+
