@@ -60,7 +60,7 @@ public class GuestService {
 					int columnsNumber = rsmd.getColumnCount();
 
 					while (itemsRS.next()) {
-					    for(int i = 1; i <= columnsNumber; i++)
+					    for(int i = 1; i < columnsNumber; i++)
 					        System.out.print(itemsRS.getString(i) + "    ");
 					    System.out.println();
 					}

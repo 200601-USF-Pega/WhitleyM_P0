@@ -2,6 +2,8 @@ package com.revature.FoolLickerBar.menu;
 import java.util.Scanner;
 
 import com.revature.FoolLickerBar.dao.IAlcoholStockDB;
+import com.revature.FoolLickerBar.services.AdminService;
+import com.revature.FoolLickerBar.services.BartenderService;
 import com.revature.FoolLickerBar.services.GuestService;
 import com.revature.FoolLickerBar.services.ValidationService;
 import com.revature.FoolLickerBar.*;
@@ -38,23 +40,28 @@ public class Menu {
 			
 	
 			
-			
+			//60 ounces per handle
+			//72 ounces per 6 pack
+			//25 ounces per bottle of wine
 			
 				switch(option) {
 				case 0: 
 					GuestService caseZero = new GuestService(repo);
 					//System.out.println("Hello friend. This is probably the most work you've had to do to pay somebody else money! Hahaha! Anyways...");
 					//System.out.println("");
-					
-				
 					caseZero.createNewTab();
 					startLoop=false;
 					break;
 				case 1:
 					//System.out.println("Exiting...");
+					BartenderService caseOne = new BartenderService(repo);
+					caseOne.getTotalStock();
 					startLoop=false;
 					break;		
 				case 2:
+					
+					//AdminService caseTwo = new AdminService(repo);
+					//caseTwo.getTotalStock();
 					startLoop=false;
 					break;
 				case 3:
